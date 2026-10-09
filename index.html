@@ -1,0 +1,451 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>LifeMeter</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,400;6..96,700&family=IBM+Plex+Sans:wght@400;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: night-sky almanac — one column, a live counter up top, stacked stat groups beneath */
+:root{
+  --ink:#07060d;
+  --panel:#110f1d;
+  --panel-2:#191629;
+  --edge:#2e2745;
+  --fg:#efeaf7;
+  --dim:#948aae;
+  --gold:#f3c969;
+  --aurora:#58e0c8;
+  --bloom:#ff5fa8;
+  --violet:#9d7bff;
+  --display:"Bodoni Moda", Didot, "Times New Roman", serif;
+  --body:"IBM Plex Sans", system-ui, -apple-system, sans-serif;
+  --mono:"IBM Plex Mono", ui-monospace, Menlo, monospace;
+  color-scheme: dark;
+}
+
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  min-height:100%;
+  font-family:var(--body);
+  color:var(--fg);
+  background:
+    radial-gradient(760px 420px at 12% -8%, #241543 0%, transparent 62%),
+    radial-gradient(640px 380px at 92% 4%, #0b2f38 0%, transparent 58%),
+    var(--ink);
+}
+
+.wrap{
+  max-width:680px;
+  margin:0 auto;
+  padding-inline:18px;
+  padding-block:30px 64px;
+  display:flex;
+  flex-direction:column;
+  gap:26px;
+}
+
+/* ---- masthead ---- */
+.mast{display:flex;flex-direction:column;gap:4px}
+h1{
+  font-family:var(--display);
+  font-weight:700;
+  font-size:clamp(2.5rem,10vw,3.6rem);
+  line-height:1;
+  margin:0;
+  letter-spacing:-.01em;
+  text-wrap:balance;
+  background:linear-gradient(96deg,var(--gold) 0%,var(--bloom) 48%,var(--aurora) 100%);
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+}
+.sub{
+  font-family:var(--display);
+  font-style:italic;
+  font-size:1rem;
+  color:var(--dim);
+}
+
+/* ---- birth control ---- */
+.birth{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  flex-wrap:wrap;
+  background:var(--panel);
+  border:1px solid var(--edge);
+  border-radius:12px;
+  padding:12px 14px;
+}
+.birth label{
+  font-family:var(--mono);
+  font-size:.66rem;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  color:var(--dim);
+}
+.birth input{
+  flex:1 1 150px;
+  min-width:0;
+  background:var(--panel-2);
+  border:1px solid var(--edge);
+  border-radius:9px;
+  color:var(--gold);
+  font-family:var(--mono);
+  font-size:.95rem;
+  padding:9px 11px;
+}
+
+/* ---- hero counter ---- */
+.hero{
+  background:var(--panel);
+  border:1px solid var(--edge);
+  border-radius:16px;
+  padding:22px 18px;
+  text-align:center;
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+.hero .big{
+  font-family:var(--mono);
+  font-weight:500;
+  font-variant-numeric:tabular-nums;
+  font-size:clamp(2rem,9.5vw,3.1rem);
+  line-height:1.05;
+  color:var(--aurora);
+  word-break:break-word;
+}
+.hero .cap{
+  font-family:var(--mono);
+  font-size:.66rem;
+  letter-spacing:.2em;
+  text-transform:uppercase;
+  color:var(--dim);
+}
+.hero .age{
+  font-family:var(--display);
+  font-size:1.05rem;
+  color:var(--fg);
+  margin-top:6px;
+}
+
+/* ---- sections ---- */
+h2{
+  font-family:var(--mono);
+  font-weight:500;
+  font-size:.68rem;
+  letter-spacing:.2em;
+  text-transform:uppercase;
+  color:var(--dim);
+  margin:0 0 12px;
+}
+section{min-width:0}
+
+.tiles{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+  gap:10px;
+}
+.tile{
+  background:var(--panel);
+  border:1px solid var(--edge);
+  border-radius:12px;
+  padding:14px;
+  min-width:0;
+  display:flex;
+  flex-direction:column;
+  gap:3px;
+}
+.tile .n{
+  font-family:var(--mono);
+  font-weight:500;
+  font-variant-numeric:tabular-nums;
+  font-size:1.5rem;
+  line-height:1.1;
+  color:var(--gold);
+  word-break:break-word;
+}
+.tile .l{font-size:.82rem;color:var(--dim);line-height:1.35}
+
+.rows{
+  background:var(--panel);
+  border:1px solid var(--edge);
+  border-radius:12px;
+  padding:4px 14px;
+}
+.row{
+  display:flex;
+  align-items:baseline;
+  gap:12px;
+  padding:12px 0;
+  border-bottom:1px solid var(--edge);
+}
+.row:last-child{border-bottom:0}
+.row .k{flex:1;min-width:0;font-size:.92rem;color:var(--fg)}
+.row .v{
+  font-family:var(--mono);
+  font-variant-numeric:tabular-nums;
+  font-size:1.05rem;
+  color:var(--aurora);
+  white-space:nowrap;
+}
+.row.bloom .v{color:var(--bloom)}
+.row.violet .v{color:var(--violet)}
+
+.zodiac{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  background:var(--panel);
+  border:1px solid var(--edge);
+  border-radius:12px;
+  padding:16px 14px;
+  margin-bottom:10px;
+}
+.zodiac .glyph{
+  font-size:2.1rem;
+  line-height:1;
+  width:52px;
+  height:52px;
+  flex:none;
+  display:grid;
+  place-items:center;
+  border-radius:12px;
+  background:linear-gradient(150deg,rgba(157,123,255,.35),rgba(88,224,200,.18));
+  border:1px solid var(--edge);
+}
+.zodiac .name{
+  font-family:var(--display);
+  font-size:1.5rem;
+  color:var(--violet);
+  line-height:1.1;
+}
+.zodiac .rulers{font-family:var(--mono);font-size:.78rem;color:var(--dim);margin-top:2px}
+
+.foot{
+  font-size:.78rem;
+  color:var(--dim);
+  line-height:1.5;
+  text-align:center;
+}
+
+:focus-visible{outline:2px solid var(--aurora);outline-offset:2px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="wrap">
+
+  <header class="mast">
+    <h1>LifeMeter</h1>
+    <div class="sub">Your life, by the numbers.</div>
+  </header>
+
+  <div class="birth">
+    <label for="dob">Born</label>
+    <input id="dob" type="date" value="1973-02-09" max="2100-12-31">
+  </div>
+
+  <div class="hero">
+    <div class="cap">Seconds alive</div>
+    <div class="big" id="secAlive">—</div>
+    <div class="age" id="ageLine"></div>
+  </div>
+
+  <section>
+    <h2>Lifetime totals</h2>
+    <div class="tiles" id="totals"></div>
+  </section>
+
+  <section>
+    <h2>Your body has been busy</h2>
+    <div class="rows" id="body"></div>
+  </section>
+
+  <section>
+    <h2>Since you opened this page</h2>
+    <div class="rows" id="session"></div>
+  </section>
+
+  <section>
+    <h2>Curiosities</h2>
+    <div class="zodiac">
+      <div class="glyph" id="zGlyph">♒</div>
+      <div>
+        <div class="name" id="zName">Aquarius</div>
+        <div class="rulers" id="zRulers">Saturn · Uranus</div>
+      </div>
+    </div>
+    <div class="rows" id="curios"></div>
+  </section>
+
+  <p class="foot">Totals past days alive are estimates from population averages, not measurements of you.</p>
+
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  var $ = function(id){ return document.getElementById(id); };
+  var dob = $("dob");
+
+  try {
+    var saved = localStorage.getItem("lm-dob");
+    if (saved && /^\d{4}-\d{2}-\d{2}$/.test(saved)) dob.value = saved;
+  } catch (e) {}
+
+  dob.addEventListener("change", function(){
+    try { localStorage.setItem("lm-dob", dob.value); } catch (e) {}
+    tick();
+  });
+  dob.addEventListener("input", tick);
+
+  /* rates, all per second unless noted */
+  var R = {
+    heart: 72 / 60,
+    breath: 16 / 60,
+    blink: 17 / 60,          /* waking hours only */
+    wakeFraction: 16 / 24,
+    deathsWorld: 1.9,        /* ~60 million a year */
+    birthsWorld: 4.2,        /* ~132 million a year */
+    foodKgDay: 1.7,
+    waterLDay: 2.6,
+    orbitKmS: 29.78,         /* Earth's speed around the sun */
+    lunarDays: 29.530588
+  };
+
+  var ZODIAC = [
+    [1, 20, "Aquarius", "♒", "Saturn · Uranus"],
+    [2, 19, "Pisces", "♓", "Jupiter · Neptune"],
+    [3, 21, "Aries", "♈", "Mars"],
+    [4, 20, "Taurus", "♉", "Venus"],
+    [5, 21, "Gemini", "♊", "Mercury"],
+    [6, 21, "Cancer", "♋", "the Moon"],
+    [7, 23, "Leo", "♌", "the Sun"],
+    [8, 23, "Virgo", "♍", "Mercury"],
+    [9, 23, "Libra", "♎", "Venus"],
+    [10, 23, "Scorpio", "♏", "Mars · Pluto"],
+    [11, 22, "Sagittarius", "♐", "Jupiter"],
+    [12, 22, "Capricorn", "♑", "Saturn"]
+  ];
+
+  function zodiacFor(d){
+    var m = d.getMonth() + 1, day = d.getDate(), found = ZODIAC[11];
+    for (var i = 0; i < ZODIAC.length; i++){
+      var z = ZODIAC[i];
+      if (m === z[0] && day >= z[1]) found = z;
+      else if (m === z[0] + 1 && day < ZODIAC[i + 1 > 11 ? 0 : i + 1][1]) found = z;
+    }
+    /* simpler pass: walk months, pick the sign whose window contains the date */
+    for (var j = 0; j < ZODIAC.length; j++){
+      var cur = ZODIAC[j], next = ZODIAC[(j + 1) % 12];
+      var startM = cur[0], startD = cur[1];
+      if ((m === startM && day >= startD) ||
+          (m === (startM % 12) + 1 && day < next[1])) return cur;
+    }
+    return found;
+  }
+
+  function fmt(n){
+    n = Math.floor(n);
+    return n.toLocaleString("en-US");
+  }
+  function big(n){
+    if (n >= 1e9) return (n / 1e9).toFixed(2) + "B";
+    if (n >= 1e6) return (n / 1e6).toFixed(1) + "M";
+    return fmt(n);
+  }
+
+  function rows(el, list){
+    var html = "";
+    for (var i = 0; i < list.length; i++){
+      html += '<div class="row ' + (list[i][2] || "") + '"><span class="k">' +
+              list[i][0] + '</span><span class="v">' + list[i][1] + "</span></div>";
+    }
+    el.innerHTML = html;
+  }
+
+  function tiles(el, list){
+    var html = "";
+    for (var i = 0; i < list.length; i++){
+      html += '<div class="tile"><span class="n">' + list[i][1] +
+              '</span><span class="l">' + list[i][0] + "</span></div>";
+    }
+    el.innerHTML = html;
+  }
+
+  var openedAt = Date.now();
+
+  function tick(){
+    var parts = (dob.value || "1973-02-09").split("-");
+    var birth = new Date(+parts[0], +parts[1] - 1, +parts[2], 0, 0, 0);
+    if (isNaN(birth.getTime())) return;
+
+    var now = Date.now();
+    var ms = now - birth.getTime();
+    if (ms < 0) ms = 0;
+
+    var sec = ms / 1000;
+    var days = sec / 86400;
+    var years = days / 365.2425;
+
+    $("secAlive").textContent = fmt(sec);
+
+    var wholeYears = Math.floor(years);
+    var dayOfYear = Math.floor(days - wholeYears * 365.2425);
+    $("ageLine").textContent = wholeYears + " years and " + dayOfYear +
+      (dayOfYear === 1 ? " day" : " days");
+
+    tiles($("totals"), [
+      ["Days alive", fmt(days)],
+      ["Hours alive", fmt(sec / 3600)],
+      ["Trips around the sun", wholeYears],
+      ["Full moons", fmt(days / R.lunarDays)]
+    ]);
+
+    rows($("body"), [
+      ["Heartbeats", fmt(sec * R.heart)],
+      ["Breaths taken", fmt(sec * R.breath)],
+      ["Blinks", fmt(sec * R.blink * R.wakeFraction)],
+      ["Food eaten", fmt(days * R.foodKgDay) + " kg"],
+      ["Water drunk", fmt(days * R.waterLDay) + " L"],
+      ["Years spent asleep", (years / 3).toFixed(1)]
+    ]);
+
+    var openSec = (now - openedAt) / 1000;
+    rows($("session"), [
+      ["Seconds on this page", fmt(openSec)],
+      ["People born on Earth", fmt(openSec * R.birthsWorld), "violet"],
+      ["People died on Earth", fmt(openSec * R.deathsWorld), "bloom"],
+      ["Your heartbeats", fmt(openSec * R.heart)]
+    ]);
+
+    var z = zodiacFor(birth);
+    $("zGlyph").textContent = z[3];
+    $("zName").textContent = z[2];
+    $("zRulers").textContent = z[4];
+
+    rows($("curios"), [
+      ["Distance travelled around the sun", big(sec * R.orbitKmS) + " km"],
+      ["People born since you were", big(sec * R.birthsWorld)],
+      ["People died since you were", big(sec * R.deathsWorld)],
+      ["Born on a", birth.toLocaleDateString("en-US", { weekday: "long" })],
+      ["Days until your next birthday", fmt(daysToBirthday(birth))]
+    ]);
+  }
+
+  function daysToBirthday(birth){
+    var now = new Date();
+    var next = new Date(now.getFullYear(), birth.getMonth(), birth.getDate());
+    if (next < new Date(now.getFullYear(), now.getMonth(), now.getDate())){
+      next = new Date(now.getFullYear() + 1, birth.getMonth(), birth.getDate());
+    }
+    return Math.round((next - new Date(now.getFullYear(), now.getMonth(), now.getDate())) / 86400000);
+  }
+
+  tick();
+  setInterval(tick, 200);
+})();
+</script>
+
+</body></html>
